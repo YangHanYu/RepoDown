@@ -1,24 +1,35 @@
 package com.ky.repodown;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
-import java.util.concurrent.CountDownLatch;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.conn.ConnectTimeoutException;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.ky.repodown.common.FtpUtils;
-import com.ky.repodown.model.FtpUrl;
-import com.lmax.disruptor.EventTranslatorOneArg;
-import com.lmax.disruptor.RingBuffer;
+
+import jodd.io.FileNameUtil;
+import jodd.io.FileUtil;
 
 /**
  * 
@@ -28,76 +39,120 @@ import com.lmax.disruptor.RingBuffer;
 @Component
 public class FtpWalker implements Walker {
 	private static final Logger LOGGER = LoggerFactory.getLogger(FtpWalker.class);
-	private final RingBuffer<FtpUrl> ringBuffer;
-	private CountDownLatch done = new CountDownLatch(1);
-	private int timeoutMillis=60*1000;
+	private int defaultTimeoutMillis=10_000;
+	private int maxTryCount=5;
+	
+	@Value("${dest.download.dir}")
+	private String basePath;
 	
 	@Autowired
 	private WalkerController walkerController;
 	
-	public FtpWalker(RingBuffer<FtpUrl> ringBuffer) {
-		super();
-		this.ringBuffer = ringBuffer;
-	}
+	@Autowired
+	private ExecutorService executorService;
 
-	private EventTranslatorOneArg<FtpUrl, String> TRANSLATOR = (event, sequence, url)->{
-		event.setUrl(url);
-	};
-	
-	
-	public void onData(String url){
-        ringBuffer.publishEvent(TRANSLATOR, url);
-    }
 	
 	/*
 	 * (non-Javadoc)
 	 * @see com.ky.repodown.Walker#walk(java.lang.String)
 	 */
 	public void walk(String url) {
-		boolean flag = true;
-		while(flag){
-			onData(url);
-		}
-//		executorService.submit(()->{
-//			try {
-//				walkProcess(url, executorService);
-//			} catch (IOException e) {
-//				LOGGER.error("遍历失败url[{}]:", url, e);
-//			}
-//		});
-		done.countDown();
+		executorService.submit(()->{
+			try {
+				walkProcess(url, executorService);
+			} catch (Exception e) {
+				LOGGER.error("遍历失败url:{}", url, e);
+			}
+		});
 	}
 	
-//	private void walkProcess(String url, ExecutorService service) throws MalformedURLException, IOException{
-//		if(FtpUtils.isIndex(url)){
-//			Document doc = Jsoup.parse(new URL(url), timeoutMillis);
-//			Elements links = doc.select("a");
-//			links.remove(0); //移除父目录(../)
-//			
-//			links.forEach(l->{
-//				String href = l.attr("href");
-//				if(FtpUtils.isIndex(href)){
-//					service.submit(()->{
-//						try {
-//							walkProcess(href, service);
-//						} catch (IOException e) {
-//							LOGGER.error("遍历失败url{}:", url, e);
-//						}
-//					});
-//				}else{
-//					onData(href);
-//				}
-//			});
-//		}else{
-//			onData(url);
-//		}
-//	}
-	
+	private void walkProcess(String url, ExecutorService service) throws MalformedURLException, IOException{
+		if(FtpUtils.isIndex(url)){
+			Document doc = null;
+			
+			int timeoutMillis = defaultTimeoutMillis;
+			int tryCount = 0;
+			while(true){
+				try {
+					doc = Jsoup.parse(new URL(url), timeoutMillis);
+					break;
+				} catch (SocketTimeoutException e) {
+					if(++tryCount <= maxTryCount){
+						timeoutMillis = timeoutMillis*2;
+						continue;
+					}else{
+						throw new SocketTimeoutException("多次重试连接均超时.");
+					}
+				}
+			}
+			
+			Elements links = doc.select("a");
+			links.remove(0); //移除父目录(../)
+			
+			List<String> filteredLinks = walkerController.filter(links.stream().map(l->{
+				return l.attr("href");
+			}).collect(Collectors.toList()));
+			
+			filteredLinks.forEach(href->{
+				if(FtpUtils.isIndex(href)){
+					service.submit(()->{
+						try {
+							walkProcess(href, service);
+						} catch (Exception e) {
+							LOGGER.error("遍历失败url:{}", url, e);
+						}
+					});
+				}else{
+					download(href);
+				}
+			});
+		}else{
+			download(url);
+		}
+	}
 
-	@Override
-	public void awitDone() throws InterruptedException {
-		done.await();
+	private void download(String url) {
+		LOGGER.info(url);
+		
+		String destFile = FileNameUtil.concat(basePath, StringUtils.replace(url, "http://maven.aliyun.com/nexus/content/groups/public/", ""));
+		
+		int timeoutMillis = defaultTimeoutMillis;
+		int tryCount = 0;
+		
+		while (true) {
+			RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(timeoutMillis).setConnectTimeout(timeoutMillis)
+					.build();
+			HttpGet get = new HttpGet(url);
+			get.setConfig(requestConfig);
+			
+			try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
+				try (CloseableHttpResponse response = httpclient.execute(get)) {
+					HttpEntity entity = response.getEntity();
+					try (InputStream in = entity.getContent()) {
+						FileUtil.mkdirs(destFile.replaceFirst("[\\\\/][^\\\\/]+$", ""));
+						FileUtil.touch(destFile);
+						FileUtil.writeStream(destFile, in);
+						break;
+					}
+				}
+			} catch (Exception e) {
+				if (e instanceof ConnectTimeoutException) {
+					if (++tryCount <= maxTryCount) {
+						timeoutMillis = timeoutMillis * 2;
+						continue;
+					} else {
+						LOGGER.error("多次重试均超时, url:{}", url, e);
+						break;
+					}
+				} else {
+					LOGGER.error("写文件失败,destFile:{}", destFile, e);
+					break;
+				}
+			} 
+		}
 		
 	}
+	
+
 
 }

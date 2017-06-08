@@ -16,9 +16,4 @@ public interface Walker {
 	 */
 	public void walk(String url);
 	
-	/**
-	 * 等待遍历结束
-	 * @throws InterruptedException 
-	 */
-	public void awitDone() throws InterruptedException;
 }

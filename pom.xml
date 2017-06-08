@@ -3,20 +3,35 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.ky.repodown</groupId>
 	<artifactId>RepoDown</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	
+	<version>0.0.2-SNAPSHOT</version>
+
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>1.5.3.RELEASE</version>
 	</parent>
-	
+
 	<dependencies>
+
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter</artifactId>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		
+		
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+
 
 		<!-- https://mvnrepository.com/artifact/org.jsoup/jsoup -->
 		<dependency>
@@ -30,13 +45,6 @@
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
 			<version>22.0</version>
-		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/org.hsqldb/hsqldb -->
-		<dependency>
-			<groupId>org.hsqldb</groupId>
-			<artifactId>hsqldb</artifactId>
-			<version>2.4.0</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
@@ -60,12 +68,22 @@
 			<version>3.5</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/com.lmax/disruptor -->
+		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
 		<dependency>
-			<groupId>com.lmax</groupId>
-			<artifactId>disruptor</artifactId>
-			<version>3.3.6</version>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.5.3</version>
 		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.5</version>
+		</dependency>
+
+
+		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-dbcp2 -->
 
 		<dependency>
 			<groupId>org.jodd</groupId>
@@ -73,11 +91,30 @@
 			<version>3.8.5</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/org.apache.maven/maven-artifact -->
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-artifact</artifactId>
+			<version>3.5.0</version>
+		</dependency>
+
 
 	</dependencies>
 
 	<build>
 		<plugins>
+			<plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
