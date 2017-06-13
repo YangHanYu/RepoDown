@@ -60,12 +60,20 @@ public class MvnWalkerControllerTest {
 		list.add(v4_1_m2);
 		list.add(v4_1_m3);
 		
+		final String v5_1 = "http://maven.aliyun.com/nexus/content/groups/public/JUnit/5.1.RELEASE/";
+		final String v5_2 = "http://maven.aliyun.com/nexus/content/groups/public/JUnit/5.2.RELEASE/";
+		final String v5_3 = "http://maven.aliyun.com/nexus/content/groups/public/JUnit/5.3.RELEASE/";
+		list.add(v5_1);
+		list.add(v5_2);
+		list.add(v5_3);
+		
 		List<String> newList = controller.filter(list);
 		
-		assertThat(newList).hasSize(3);
+		assertThat(newList).hasSize(4);
 		assertThat(newList).contains(v1_2_3);
 		assertThat(newList).contains(v2_1_1);
 		assertThat(newList).contains(v3_1_1release);
+		assertThat(newList).contains(v5_3);
 		
 	} 
 }

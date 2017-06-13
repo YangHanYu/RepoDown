@@ -37,6 +37,9 @@ public class MvnWalkerController implements WalkerController{
 	private static final String VERSION_DIGIT_STR = "\\d+(\\.\\d+){1,2}";
 	private static final Pattern HAS_VERSION_DIGIT_PATTERN = Pattern.compile(VERSION_DIGIT_STR);
 	
+    private static final int QUALIFIER_WEIGHT = 1000_0000; //版本信息中的限定符 权重
+    private static final int VERSION_WEIGHT = 10_0000; //版本信息中的版本数值 权重
+	
 	
 	@Override
 	public List<String> filter(Iterable<String> links) {
@@ -56,7 +59,8 @@ public class MvnWalkerController implements WalkerController{
 				}else if(hasVersionDigitMatcher.find()){
 					String[] versionDigitLiftAndRight = dir.split(VERSION_DIGIT_STR, 2);
 					final String left = versionDigitLiftAndRight[0];
-					final String right = versionDigitLiftAndRight[1];
+					final String right = StringUtils.replaceFirst(versionDigitLiftAndRight[1], "^[.-]", "");
+					
 					String versionString = hasVersionDigitMatcher.group() + "-" + left + right; 
 					versionPathList.add(new VersionPath(versionString, url));
 				}else{
@@ -72,11 +76,11 @@ public class MvnWalkerController implements WalkerController{
 		
 		//按版本限定符首字符分组
 		Map<String, List<VersionPath>> qualifierGroups = versionPathList.stream().collect(Collectors.groupingBy(v->{
-			final String qualifier = StringUtils.defaultIfBlank(v.getArtiVersion().getQualifier(), "");
-			return qualifier.toUpperCase();
+			final String qualifier = StringUtils.defaultIfEmpty(v.getArtiVersion().getQualifier(), "");
+            return StringUtils.substring(qualifier, 0, 1).toUpperCase();
 		}));
 		
-		//取限定符最大的包
+		//取限定符首字符最大的包
 		Optional<String> newestQualifierGroupName = qualifierGroups.keySet().stream().max((a, b)->{
 			return a.compareToIgnoreCase(b);
 		});
@@ -91,10 +95,16 @@ public class MvnWalkerController implements WalkerController{
 			}));
 			
 			majorGroups.forEach((major, majorVersionList)->{
-				
+			    
 				//取版本最新的
 				Optional<VersionPath> vPath = majorVersionList.stream().max((a, b) -> {
-					return a.getCompVersion().compareTo(b.getCompVersion());
+				    String aQualifier = StringUtils.defaultIfEmpty(a.getArtiVersion().getQualifier(), "") ;
+				    String bQualifier = StringUtils.defaultIfEmpty(b.getArtiVersion().getQualifier(), "");
+				    
+				    int qualifierComp = aQualifier.compareToIgnoreCase(bQualifier);
+				    int versionComp = a.getCompVersion().compareTo(b.getCompVersion());
+				    
+                    return qualifierComp * QUALIFIER_WEIGHT + versionComp * VERSION_WEIGHT;
 				});
 				result.add((String) vPath.get().getData());
 			});
@@ -113,7 +123,13 @@ public class MvnWalkerController implements WalkerController{
 				
 				//取版本最新的
 				Optional<VersionPath> vPath = majorVersionList.stream().max((a, b) -> {
-					return a.getCompVersion().compareTo(b.getCompVersion());
+				    String aQualifier = StringUtils.defaultIfEmpty(a.getArtiVersion().getQualifier(), "") ;
+                    String bQualifier = StringUtils.defaultIfEmpty(b.getArtiVersion().getQualifier(), "");
+                    
+                    int qualifierComp = aQualifier.compareToIgnoreCase(bQualifier);
+                    int versionComp = a.getCompVersion().compareTo(b.getCompVersion());
+                    
+                    return qualifierComp * QUALIFIER_WEIGHT + versionComp * VERSION_WEIGHT;
 				});
 				result.add((String) vPath.get().getData());
 			});
@@ -169,7 +185,7 @@ public class MvnWalkerController implements WalkerController{
 	}
 	
 	public static void main(String[] args) {
-		ArtifactVersion v = new DefaultArtifactVersion("1.2.3dabc");
+		ArtifactVersion v = new DefaultArtifactVersion("1.2.0dabc");
 		System.out.println(v.getQualifier());
 		System.out.println(v.getMajorVersion());
 		System.out.println(v.getMinorVersion());
