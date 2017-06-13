@@ -1,0 +1,8 @@
+dest:
+    downloadDir: E:\\HanYu_WorkDir\\mvnRepo
+
+executor:
+    pool:
+        corePoolSize: 20
+        maximumPoolSize: 20
+        keepAliveTime: 30

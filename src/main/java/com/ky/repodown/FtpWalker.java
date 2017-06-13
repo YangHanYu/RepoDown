@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
-import java.net.URL;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
@@ -41,9 +40,12 @@ public class FtpWalker implements Walker {
 	private static final Logger LOGGER = LoggerFactory.getLogger(FtpWalker.class);
 	private int defaultTimeoutMillis=10_000;
 	private int maxTryCount=5;
+	private static final String HEADER_USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.10 Safari/537.36";
 	
-	@Value("${dest.download.dir}")
+	@Value("${dest.downloadDir}")
 	private String basePath;
+	
+	private static final Logger MISSING_LOGGER = LoggerFactory.getLogger("com.ky.repodown.missingLogger");
 	
 	@Autowired
 	private WalkerController walkerController;
@@ -61,6 +63,7 @@ public class FtpWalker implements Walker {
 			try {
 				walkProcess(url, executorService);
 			} catch (Exception e) {
+			    MISSING_LOGGER.error("URL:{} , exception:{} , exception-msg:{}", url, e.getClass().getName(), StringUtils.replaceAll(e.getMessage(), "\n", " ") );
 				LOGGER.error("遍历失败url:{}", url, e);
 			}
 		});
@@ -74,7 +77,7 @@ public class FtpWalker implements Walker {
 			int tryCount = 0;
 			while(true){
 				try {
-					doc = Jsoup.parse(new URL(url), timeoutMillis);
+					doc = Jsoup.connect(url).timeout(timeoutMillis).header("User-Agent", HEADER_USER_AGENT).get();
 					break;
 				} catch (SocketTimeoutException e) {
 					if(++tryCount <= maxTryCount){
@@ -99,6 +102,7 @@ public class FtpWalker implements Walker {
 						try {
 							walkProcess(href, service);
 						} catch (Exception e) {
+						    MISSING_LOGGER.error("URL:{} , exception:{} , exception-msg:{}", url, e.getClass().getName(), StringUtils.replaceAll(e.getMessage(), "\n", " ") );
 							LOGGER.error("遍历失败url:{}", url, e);
 						}
 					});
@@ -123,6 +127,7 @@ public class FtpWalker implements Walker {
 			RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(timeoutMillis).setConnectTimeout(timeoutMillis)
 					.build();
 			HttpGet get = new HttpGet(url);
+			get.setHeader("User-Agent", HEADER_USER_AGENT);
 			get.setConfig(requestConfig);
 			
 			try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
@@ -141,10 +146,12 @@ public class FtpWalker implements Walker {
 						timeoutMillis = timeoutMillis * 2;
 						continue;
 					} else {
+					    MISSING_LOGGER.error("URL:{} , exception:{} , exception-msg:{}", url, e.getClass().getName(), StringUtils.replaceAll(e.getMessage(), "\n", " ") );
 						LOGGER.error("多次重试均超时, url:{}", url, e);
 						break;
 					}
 				} else {
+				    MISSING_LOGGER.error("URL:{} , exception:{} , exception-msg:{}", url, e.getClass().getName(), StringUtils.replaceAll(e.getMessage(), "\n", " ") );
 					LOGGER.error("写文件失败,destFile:{}", destFile, e);
 					break;
 				}

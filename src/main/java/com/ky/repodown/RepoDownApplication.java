@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -41,10 +42,7 @@ public class RepoDownApplication implements CommandLineRunner {
 	}
 	
 	@Bean
-	public ExecutorService executorService(BlockingQueue<Runnable> workQueue){
-		int corePoolSize = 20;
-		int maximumPoolSize = 20;
-		long keepAliveTime = 30;
+	public ExecutorService executorService(BlockingQueue<Runnable> workQueue, @Value("${executor.pool.corePoolSize}") int corePoolSize, @Value("${executor.pool.maximumPoolSize}")  int maximumPoolSize, @Value("${executor.pool.keepAliveTime}") long keepAliveTime){
 		ExecutorService executorService = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, TimeUnit.SECONDS, workQueue, new ThreadPoolExecutor.CallerRunsPolicy());
 		return executorService;
 	}
