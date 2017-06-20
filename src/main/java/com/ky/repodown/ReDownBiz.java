@@ -24,7 +24,7 @@ public class ReDownBiz {
     
     public void reDownload(String file) throws UnsupportedEncodingException, FileNotFoundException, IOException{
         try(BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"))){
-            Pattern urlParrern = Pattern.compile("^url:\\bhttp://[-A-Z0-9+&@#/%?=~_|$!:,.;]*[A-Z0-9+&@#/%=~_|$]");
+            Pattern urlParrern = Pattern.compile("(?i)(?<=^url:)\\bhttp://[-A-Z0-9+&@#/%?=~_|$!:,.;]*[A-Z0-9+&@#/%=~_|$]");
             
             String line = null;
             while((line=reader.readLine())!=null){
