@@ -1,8 +1,8 @@
 package com.ky.repodown;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,54 +26,216 @@ public class MvnWalkerControllerTest {
 	
 	@Test
 	public void testFilter(){
+	    String text = "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/1.0-rc1/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/1.0.1/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/1.0/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/1.1-rc1/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/1.1-rc2/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/1.1.1/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/1.1.2/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/1.1.3/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/1.1.4/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/1.1.5/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/1.1/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/1.2-rc1/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/1.2-rc2/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/1.2.1/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/1.2.2/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/1.2.3/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/1.2.4/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/1.2.5/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/1.2.6/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/1.2.7/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/1.2.8/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/1.2.9/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/1.2/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/2.0-m1/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/2.0-m2/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/2.0-m3/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/2.0-m4/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/2.0-m5/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/2.0-rc1/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/2.0-rc2/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/2.0.1/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/2.0.2/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/2.0.3/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/2.0.4/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/2.0.5/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/2.0.6/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/2.0.7/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/2.0.8/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/2.0/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/2.5.1/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/2.5.2/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/2.5.3/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/2.5.4/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/2.5.5/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/2.5.6.SEC01/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/2.5.6.SEC02/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/2.5.6.SEC03-atlassian-2/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/2.5.6.SEC03-atlassian-6/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/2.5.6.SEC03/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/2.5.6/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/2.5/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.0.0.M3/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.0.0.M4/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.0.0.RC1/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.0.0.RC2/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.0.0.RC3/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.0.0.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.0.1.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.0.2.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.0.3.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.0.4.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.0.5.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.0.5.release/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.0.6.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.0.6.release/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.0.7.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.0.7.release/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.1.0.M1/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.1.0.M2/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.1.0.RC1/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.1.0.RC2/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.1.0.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.1.1.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.1.1.Release/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.1.1.release/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.1.2.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.1.2.release/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.1.3.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.1.3.release/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.1.4.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.1.4.Release/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.1.4.release/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.2.0.BUILD/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.2.0.M1/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.2.0.M2/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.2.0.RC1/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.2.0.RC2/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.2.0.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.2.0.release/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.2.1.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.2.10.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.2.11.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.2.12.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.2.13.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.2.13.release/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.2.14.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.2.15.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.2.16.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.2.17.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.2.18.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.2.2.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.2.3.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.2.3.release/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.2.4.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.2.4.RElEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.2.5.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.2.5.Release/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.2.5.release/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.2.6.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.2.7.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.2.8.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.2.8.release/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.2.9.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.2.9.release/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.0.0.M1/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.0.0.M2/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.0.0.M3/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.0.0.RC1/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.0.0.RC2/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.0.0.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.0.0.Release/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.0.1.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.0.1.Release/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.0.2.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.0.3.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.0.3.release/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.0.4.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.0.4.Release/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.0.4.release/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.0.5.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.0.5.release/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.0.6.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.0.6.release/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.0.7.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.0.8.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.0.9.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.0.9.release/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.1.0.RC1/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.1.0.RC2/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.1.0.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.1.0.Release/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.1.1.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.1.2.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.1.2.Release/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.1.2.release/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.1.3.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.1.3.Release/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.1.3.release/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.1.4.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.1.5.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.1.6.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.1.6.release/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.1.7.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.1.7.RELEaSE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.1.7.release/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.1.8.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.1.9.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.1.9.release/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.2.0.RC1/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.2.0.RC2/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.2.0.RC3/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.2.0.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.2.1.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.2.2.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.2.3.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.2.4.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.2.4.release/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.2.5.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.2.5.Release/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.2.5.release/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.2.6.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.2.6.Release/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.2.6.release/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.2.7.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.2.8.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.2.8.Release/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.2.8.release/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.2.9.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.3.0.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.3.0.Release/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.3.1.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.3.1.release/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.3.2.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.3.2.release/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.3.3.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.3.3.release/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.3.4.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.3.4.Release/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.3.4.release/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.3.5.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.3.5.Release/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.3.5.release/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.3.6.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.3.6.release/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.3.7.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.3.8.RELEASE/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/RELEASE-5.3.7/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/RELEASE-5.3.8/\r\n" + 
+	            "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.3.9.RELEASE/";
+	    
+		List<String> links = Lists.newArrayList(text.split("\r\n"));
 		
-		List<String> list = Lists.newArrayList();
+		List<String> newLinks = controller.filter(links);
 		
-		final String v1_2_0 = "http://maven.aliyun.com/nexus/content/groups/public/JUnit/1.2.0/";
-		final String v1_2_1 = "http://maven.aliyun.com/nexus/content/groups/public/JUnit/1.2.1/";
-		final String v1_2_3 = "http://maven.aliyun.com/nexus/content/groups/public/JUnit/1.2.3/";
-		list.add(v1_2_0);
-		list.add(v1_2_1);
-		list.add(v1_2_3);
-		
-		final String v2_1 = "http://maven.aliyun.com/nexus/content/groups/public/JUnit/2.1/";
-		final String v2_1_1 = "http://maven.aliyun.com/nexus/content/groups/public/JUnit/2.1.1/";
-		list.add(v2_1);
-		list.add(v2_1_1);
-		
-		final String v3_1_1_rc1 = "http://maven.aliyun.com/nexus/content/groups/public/JUnit/3.1.1-RC1";
-		final String v3_1_1_rc2 = "http://maven.aliyun.com/nexus/content/groups/public/JUnit/3.1.1-RC2";
-		final String v3_1_1release = "http://maven.aliyun.com/nexus/content/groups/public/JUnit/3.1.1-RELEASE";
-		final String v3_2_1rc1 = "http://maven.aliyun.com/nexus/content/groups/public/JUnit/3.2.1-RC1";
-		final String v3_2_1rc2 = "http://maven.aliyun.com/nexus/content/groups/public/JUnit/3.2.2-RC2";
-		list.add(v3_1_1_rc1);
-		list.add(v3_1_1_rc2);
-		list.add(v3_1_1release);
-		list.add(v3_2_1rc1);
-		list.add(v3_2_1rc2);
-		
-		
-		final String v4_1_m1 = "http://maven.aliyun.com/nexus/content/groups/public/JUnit/4.1-M1/";
-		final String v4_1_m2 = "http://maven.aliyun.com/nexus/content/groups/public/JUnit/4.1-M2/";
-		final String v4_1_m3 = "http://maven.aliyun.com/nexus/content/groups/public/JUnit/4.3-M3/";
-		list.add(v4_1_m1);
-		list.add(v4_1_m2);
-		list.add(v4_1_m3);
-		
-		final String v5_1 = "http://maven.aliyun.com/nexus/content/groups/public/JUnit/5.1.RELEASE/";
-		final String v5_2 = "http://maven.aliyun.com/nexus/content/groups/public/JUnit/5.2.RELEASE/";
-		final String v5_3 = "http://maven.aliyun.com/nexus/content/groups/public/JUnit/5.3.RELEASE/";
-		list.add(v5_1);
-		list.add(v5_2);
-		list.add(v5_3);
-		
-		List<String> newList = controller.filter(list);
-		
-		assertThat(newList).hasSize(4);
-		assertThat(newList).contains(v1_2_3);
-		assertThat(newList).contains(v2_1_1);
-		assertThat(newList).contains(v3_1_1release);
-		assertThat(newList).contains(v5_3);
+		assertThat(newLinks).contains("http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/4.3.9.RELEASE/",
+		        "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/1.2.9/",
+		        "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/2.5.6/",
+		        "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/3.2.18.RELEASE/",
+		        "http://maven.aliyun.com/nexus/content/groups/public/org/springframework/spring-core/RELEASE-5.3.8/"
+		        );
 		
 	} 
 }

@@ -1,5 +1,6 @@
 package com.ky.repodown;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -8,6 +9,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.config.RequestConfig;
@@ -115,7 +117,7 @@ public class FtpWalker implements Walker {
 		}
 	}
 
-	private void download(String url) {
+	public void download(String url) {
 		LOGGER.info(url);
 		
 		String destFile = FileNameUtil.concat(basePath, StringUtils.replace(url, "http://maven.aliyun.com/nexus/content/groups/public/", ""));
@@ -134,7 +136,8 @@ public class FtpWalker implements Walker {
 				try (CloseableHttpResponse response = httpclient.execute(get)) {
 					HttpEntity entity = response.getEntity();
 					try (InputStream in = entity.getContent()) {
-						FileUtil.mkdirs(destFile.replaceFirst("[\\\\/][^\\\\/]+$", ""));
+//						FileUtil.mkdirs(destFile.replaceFirst("[\\\\/][^\\\\/]+$", ""));
+					    FileUtils.forceMkdirParent(new File(destFile));
 						FileUtil.touch(destFile);
 						FileUtil.writeStream(destFile, in);
 						break;

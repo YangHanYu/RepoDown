@@ -31,13 +31,26 @@ public class RepoDownApplication implements CommandLineRunner {
 	@Autowired
 	private Walker walker;
 	
+	@Autowired
+	private ReDownBiz redownBiz;
+	
+	@Value("${redown.redown}")
+	private boolean redown;
+	
+	@Value("${redown.missingLog}")
+	private String missingLogFile;
+	
 	
 	@Override
 	public void run(String... args) throws Exception {
 		String url="http://maven.aliyun.com/nexus/content/groups/public/";
 		
 		LOGGER.info("start...");
-		walker.walk(url);
+		if(redown){
+		    redownBiz.reDownload(missingLogFile);
+		}else{
+		    walker.walk(url);
+		}
 		LOGGER.info("done..");
 	}
 	
