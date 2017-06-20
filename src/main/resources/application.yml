@@ -8,5 +8,5 @@ executor:
         keepAliveTime: 30
         
 redown:
-	redown:true
-	missingLog:
+    redown: false
+    missingLog: missingUrl.log
