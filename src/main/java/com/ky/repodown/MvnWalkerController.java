@@ -27,7 +27,7 @@ import com.ky.repodown.model.VersionPath;
 public class MvnWalkerController implements WalkerController{
 	private static final Logger LOGGER = LoggerFactory.getLogger(MvnWalkerController.class);
 	private static final Pattern URL_END_DIR_PATTERN = Pattern.compile("(?<=/)[^/]+(?=/$|$)");
-	private static final Pattern VERSION_DIR_PATTERN = Pattern.compile("^(?:([a-zA-z]\\w+)[.\\-\\s]|)(\\b\\d+(?:\\.\\d+){1,2}\\b)(?:[.-](\\D.+)|)$");
+	private static final Pattern VERSION_DIR_PATTERN = Pattern.compile("^(?:([A-Za-z][\\w_-]+?)[.\\-\\s]|)(\\b\\d+(?:\\.\\d+){1,2}\\b)(?:[.-](\\D.+)|)$");
 	
 	private static final Pattern QUALIFIER_VERSION_PATTERN = Pattern.compile("(\\d+(?:\\.\\d+){1,2}\\b(?:[.-].+?|))(\\d*)$");
 	
