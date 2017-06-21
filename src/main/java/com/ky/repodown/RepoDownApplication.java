@@ -44,16 +44,17 @@ public class RepoDownApplication implements CommandLineRunner {
 	@Value("${redown.missingLog}")
 	private String missingLogFile;
 	
+	@Value("${source.rootUrl}")
+	private String rootUrl;
 	
 	@Override
 	public void run(String... args) throws Exception {
-		String url="http://maven.aliyun.com/nexus/content/groups/public/";
 		
 		LOGGER.info("start...");
 		if(redown){
 		    redownBiz.reDownload(missingLogFile);
 		}else{
-		    walker.walk(url);
+		    walker.walk(rootUrl);
 		}
 		LOGGER.info("done..");
 	}

@@ -43,6 +43,9 @@ public class FtpWalker implements Walker {
 	private int defaultTimeoutMillis=10_000;
 	private int maxTryCount=5;
 	private static final String HEADER_USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.10 Safari/537.36";
+
+	@Value("${source.rootUrl}")
+    private String rootUrl;
 	
 	@Value("${dest.downloadDir}")
 	private String basePath;
@@ -51,6 +54,9 @@ public class FtpWalker implements Walker {
 	
 	@Autowired
 	private WalkerController walkerController;
+	
+	@Value("${walker.filter.enabled}")
+	private boolean filterEnabled = true;
 	
 	@Autowired
 	private ExecutorService executorService;
@@ -61,11 +67,12 @@ public class FtpWalker implements Walker {
 	 * @see com.ky.repodown.Walker#walk(java.lang.String)
 	 */
 	public void walk(String url) {
+	    LOGGER.info("walker filterEnabled:{}", filterEnabled);
 		executorService.submit(()->{
 			try {
 				walkProcess(url, executorService);
 			} catch (Exception e) {
-			    MISSING_LOGGER.error("URL:{} , exception:{} , exception-msg:{}", url, e.getClass().getName(), StringUtils.replaceAll(e.getMessage(), "\n", " ") );
+			    MISSING_LOGGER.error("URL:{} , exception:{} , e-msg:{}", url, e.getClass().getName(), StringUtils.replaceAll(e.getMessage(), "\n", " ") );
 				LOGGER.error("遍历失败url:{}", url, e);
 			}
 		});
@@ -94,17 +101,23 @@ public class FtpWalker implements Walker {
 			Elements links = doc.select("a");
 			links.remove(0); //移除父目录(../)
 			
-			List<String> filteredLinks = walkerController.filter(links.stream().map(l->{
+			List<String> hrefLinks = links.stream().map(l->{
 				return l.attr("href");
-			}).collect(Collectors.toList()));
+			}).collect(Collectors.toList());
 			
-			filteredLinks.forEach(href->{
+			if(filterEnabled){
+			    hrefLinks = walkerController.filter(hrefLinks);
+			}
+			
+			
+			
+			hrefLinks.forEach(href->{
 				if(FtpUtils.isIndex(href)){
 					service.submit(()->{
 						try {
 							walkProcess(href, service);
 						} catch (Exception e) {
-						    MISSING_LOGGER.error("URL:{} , exception:{} , exception-msg:{}", url, e.getClass().getName(), StringUtils.replaceAll(e.getMessage(), "\n", " ") );
+						    MISSING_LOGGER.error("URL:{} , exception:{} , e-msg:{}", url, e.getClass().getName(), StringUtils.replaceAll(e.getMessage(), "\n", " ") );
 							LOGGER.error("遍历失败url:{}", url, e);
 						}
 					});
@@ -120,7 +133,7 @@ public class FtpWalker implements Walker {
 	public void download(String url) {
 		LOGGER.info(url);
 		
-		String destFile = FileNameUtil.concat(basePath, StringUtils.replace(url, "http://maven.aliyun.com/nexus/content/groups/public/", ""));
+		String destFile = FileNameUtil.concat(basePath, StringUtils.replace(url, rootUrl, ""));
 		
 		int timeoutMillis = defaultTimeoutMillis;
 		int tryCount = 0;
@@ -149,12 +162,12 @@ public class FtpWalker implements Walker {
 						timeoutMillis = timeoutMillis * 2;
 						continue;
 					} else {
-					    MISSING_LOGGER.error("URL:{} , exception:{} , exception-msg:{}", url, e.getClass().getName(), StringUtils.replaceAll(e.getMessage(), "\n", " ") );
+					    MISSING_LOGGER.error("URL:{} , exception:{} , e-msg:{}", url, e.getClass().getName(), StringUtils.replaceAll(e.getMessage(), "\n", " ") );
 						LOGGER.error("多次重试均超时, url:{}", url, e);
 						break;
 					}
 				} else {
-				    MISSING_LOGGER.error("URL:{} , exception:{} , exception-msg:{}", url, e.getClass().getName(), StringUtils.replaceAll(e.getMessage(), "\n", " ") );
+				    MISSING_LOGGER.error("URL:{} , exception:{} , e-msg:{}", url, e.getClass().getName(), StringUtils.replaceAll(e.getMessage(), "\n", " ") );
 					LOGGER.error("写文件失败,destFile:{}", destFile, e);
 					break;
 				}
