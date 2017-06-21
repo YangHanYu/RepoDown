@@ -5,6 +5,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.LongAdder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +17,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableMBeanExport;
+
+import com.google.common.base.Charsets;
+import com.google.common.hash.BloomFilter;
 
 /**
  * 
@@ -63,6 +67,17 @@ public class RepoDownApplication implements CommandLineRunner {
 	@Bean
 	public BlockingQueue<Runnable> workQueue(){
 		return new LinkedBlockingQueue<>();
+	}
+	
+	@Bean
+	public LongAdder rowAdder(){
+	    return new LongAdder();
+	}
+	
+	@Bean
+	public BloomFilter<String> bloomFilter(){
+	    BloomFilter<String> blooFilter = BloomFilter.create((u, ps)->{ps.putString(u, Charsets.UTF_8);}, 1024*1024*64, 0.000000001d);
+	    return blooFilter;
 	}
 	
 	public static void main(String[] args) {

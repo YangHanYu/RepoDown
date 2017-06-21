@@ -7,5 +7,10 @@ package com.ky.repodown.jmx;
  *
  */
 public interface IDownloadQueueMBean {
+    
 	public int getQueueLength();
+
+    public long getProcessedRow();
+
+    public long getBloomFilterElements();
 }
