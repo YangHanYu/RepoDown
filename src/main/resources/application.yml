@@ -10,3 +10,5 @@ executor:
 redown:
     redown: false
     missingLog: missingUrl.log
+    waterLine: 5000
+    downloadLimit: 1000
