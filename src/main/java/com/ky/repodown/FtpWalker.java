@@ -102,7 +102,12 @@ public class FtpWalker implements Walker {
 			links.remove(0); //移除父目录(../)
 			
 			List<String> hrefLinks = links.stream().map(l->{
-				return l.attr("href");
+				String href = l.attr("href");
+				if(href.startsWith("http://")){
+				    return href;
+				}else{
+				    return url.replaceFirst("/*$", "")  + "/" + href.replaceFirst("^/*", "");
+				}
 			}).collect(Collectors.toList());
 			
 			if(filterEnabled){
